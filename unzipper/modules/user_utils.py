@@ -15,32 +15,49 @@ from unzipper.database.language import get_language
 from unzipper.helpers_nexa.buttons import (
     E_STAR, E_ROCKET, E_GREEN, E_BOLT, E_LOCK, E_STATS, E_ARROW
 )
+from config import Config
 
 logger = logging.getLogger(__name__)
 
 # ── Wallhaven ─────────────────────────────────────────────────────────
+# API key: hardcoded from src-bot (same as reference file)
 WALLHAVEN_API_KEY = "FsXt5pwoerVZrsV3DwhRctls8YzUev9H"
 
+# categories=011 → anime+people only (same as src-bot)
+# categories=110 → general+anime (old setting — changed to 011)
 WALLHAVEN_QUERIES = [
     "anime+girl+portrait", "anime+portrait+face", "anime+girl+close+up",
-    "anime+beautiful+face", "anime+school+girl", "anime+fantasy+girl",
-    "anime+magic+girl", "anime+witch+girl", "anime+elf+girl",
-    "anime+princess", "anime+dark+girl", "anime+gothic+girl",
-    "anime+demon+girl", "anime+vampire+girl", "anime+girl+sakura",
-    "anime+girl+nature", "anime+girl+sunset", "anime+girl+rain",
-    "anime+girl+snow", "anime+girl+flowers", "anime+girl+forest",
-    "anime+kawaii+girl", "anime+cute+girl", "anime+warrior+girl",
-    "anime+cyberpunk+girl", "anime+girl+ocean", "anime+girl+sky",
+    "anime+beautiful+face", "anime+school+girl", "anime+school+uniform",
+    "anime+sailor+uniform", "anime+fantasy+girl", "anime+magic+girl",
+    "anime+witch+girl", "anime+elf+girl", "anime+princess",
+    "anime+dark+girl", "anime+gothic+girl", "anime+demon+girl",
+    "anime+vampire+girl", "anime+girl+sakura", "anime+girl+nature",
+    "anime+girl+sunset", "anime+girl+rain", "anime+girl+snow",
+    "anime+girl+flowers", "anime+girl+forest", "anime+girl+summer",
+    "anime+girl+winter", "anime+girl+spring", "anime+girl+autumn",
+    "anime+kawaii+girl", "anime+cute+girl", "anime+chibi+girl",
+    "anime+warrior+girl", "anime+sword+girl", "anime+ninja+girl",
+    "anime+knight+girl", "anime+cyberpunk+girl", "anime+girl+ocean",
+    "anime+girl+sky", "anime+girl+clouds", "anime+mermaid",
     "anime+girl+night", "anime+girl+stars", "anime+girl+moon",
-    "anime+girl+galaxy", "anime+pink+hair+girl", "anime+waifu",
-    "anime+girl+4k", "anime+girl+aesthetic", "anime+cherry+blossom",
+    "anime+girl+galaxy", "anime+pink+hair+girl", "anime+blue+hair+girl",
+    "anime+white+hair+girl", "anime+silver+hair+girl", "anime+red+hair+girl",
+    "anime+blonde+anime+girl", "anime+girl+smile", "anime+girl+serious",
+    "anime+kimono+girl", "anime+yukata+girl", "anime+shrine+maiden",
+    "anime+japanese+girl", "anime+waifu", "anime+girl+4k",
+    "anime+girl+aesthetic", "anime+girl+minimal", "anime+cherry+blossom",
     "anime+boy+cool", "anime+couple", "anime+art",
-    "beautiful+girl+portrait", "aesthetic+girl+photography",
+    "beautiful+girl+portrait", "asian+girl+portrait+4k",
+    "aesthetic+girl+photography", "beautiful+woman+4k",
+    "girl+nature+portrait", "model+photography+portrait",
     "cute+girl+wallpaper", "pretty+girl+face+portrait",
-    "girl+flowers+photography", "girl+city+night+photography",
+    "girl+sunset+photography", "woman+aesthetic+wallpaper",
+    "girl+flowers+photography", "beautiful+eyes+portrait",
+    "girl+rain+photography", "woman+forest+portrait",
+    "girl+city+night+photography",
 ]
 
-FALLBACK_IMAGE = "https://wallhaven.cc/images/layout/logo.png"
+FALLBACK_IMAGE = "https://l.arzfun.com/duLNg"
 
 
 async def fetch_random_wallhaven_image() -> str:
@@ -59,7 +76,7 @@ async def fetch_random_wallhaven_image() -> str:
                 data   = await resp.json()
                 images = data.get("data", [])
                 if not images:
-                    # Fallback: no q filter
+                    # Fallback: no query filter, just random
                     fb = (
                         f"https://wallhaven.cc/api/v1/search"
                         f"?categories=011&purity=100&sorting=random"
@@ -69,7 +86,7 @@ async def fetch_random_wallhaven_image() -> str:
                         images = (await r2.json()).get("data", [])
                 if not images:
                     return FALLBACK_IMAGE
-                chosen = random.choice(images)
+                chosen  = random.choice(images)
                 img_url = chosen.get("path", FALLBACK_IMAGE)
                 logger.info(f"Wallhaven | query={query} page={page} | {img_url}")
                 return img_url
@@ -89,9 +106,9 @@ async def start_bot(client, message: Message):
     except Exception:
         pass
 
-    lang    = await get_language(message.chat.id)
-    texts   = STRINGS[lang]
-    bot_me  = await client.get_me()
+    lang   = await get_language(message.chat.id)
+    texts  = STRINGS[lang]
+    bot_me = await client.get_me()
 
     caption = (
         f"<b>{E_STAR} Hello {message.from_user.mention},</b>\n"
@@ -118,6 +135,7 @@ async def start_bot(client, message: Message):
             parse_mode="html"
         )
     except Exception:
+        # Photo fail ho toh text fallback
         await message.reply_text(
             caption,
             reply_markup=Buttons.START,
@@ -148,7 +166,6 @@ async def give_my_thumb(_, message: Message, texts):
         return await prs_msg.edit(texts["no_thumb"])
     await prs_msg.delete()
     await message.reply_photo(gthumb)
-    # FIX: check file exists before removing
     if path.exists(gthumb):
         remove(gthumb)
 
@@ -161,7 +178,6 @@ async def delete_my_thumb(_, message: Message, texts):
     if not texist:
         return await prs_msg.edit(texts["no_thumb"])
     await del_thumbnail(message.from_user.id)
-    # FIX: check file exists before removing
     if path.exists(texist):
         remove(texist)
     await prs_msg.edit(texts["ok_deleting_thumb"])
