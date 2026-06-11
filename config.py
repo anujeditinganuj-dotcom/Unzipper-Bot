@@ -7,7 +7,7 @@ class Config(object):
     APP_ID       = int(os.environ.get("APP_ID", "37476811"))
     API_HASH     = os.environ.get("API_HASH", "7aa60670b871050820086c6267371ee6")
     BOT_TOKEN    = os.environ.get("BOT_TOKEN", "8741784728:AAFLpwz7UZvEUumoxgO2I7ii8Lo-9ZSpa1o")
-    LOGS_CHANNEL = int(os.environ.get("LOGS_CHANNEL", "-1003824246703"))
+    LOGS_CHANNEL = int(os.environ.get("LOGS_CHANNEL", "-1001413436770"))
     BOT_OWNER    = int(os.environ.get("BOT_OWNER", "8730393744"))
     MONGODB_URL  = os.environ.get("MONGODB_URL", "mongodb+srv://Anujedit:Anujedit@cluster0.7cs2nhd.mongodb.net/?appName=Cluster0")
     GOFILE_TOKEN = os.environ.get("GOFILE_TOKEN", "dtTUYSgS85ipBgOyohzyfbZ99nhyZLcd")
