@@ -7,5 +7,6 @@ aiohttp
 pykeyboard
 aiofiles
 flask
+Pillow
 requests
 git+https://github.com/Itz-fork/Gofile2.git
