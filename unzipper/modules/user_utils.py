@@ -1,0 +1,181 @@
+# ===================================================================== #
+#  Modified: Wallhaven random photo + text on /start  (Src-bot style)  #
+# ===================================================================== #
+
+import random
+import logging
+import aiohttp
+from os import path, remove
+from pyrogram import filters
+from pyrogram.types import Message
+from unzipper import unzip_client, Buttons
+from unzipper.database.thumbnail import save_thumbnail, get_thumbnail, del_thumbnail
+from unzipper.client.caching import STRINGS
+from unzipper.database.language import get_language
+from unzipper.helpers_nexa.buttons import (
+    E_STAR, E_ROCKET, E_GREEN, E_BOLT, E_LOCK, E_STATS, E_ARROW
+)
+
+logger = logging.getLogger(__name__)
+
+# ── Wallhaven ─────────────────────────────────────────────────────────
+WALLHAVEN_API_KEY = "FsXt5pwoerVZrsV3DwhRctls8YzUev9H"
+
+WALLHAVEN_QUERIES = [
+    "anime+girl+portrait", "anime+portrait+face", "anime+girl+close+up",
+    "anime+beautiful+face", "anime+school+girl", "anime+fantasy+girl",
+    "anime+magic+girl", "anime+witch+girl", "anime+elf+girl",
+    "anime+princess", "anime+dark+girl", "anime+gothic+girl",
+    "anime+demon+girl", "anime+vampire+girl", "anime+girl+sakura",
+    "anime+girl+nature", "anime+girl+sunset", "anime+girl+rain",
+    "anime+girl+snow", "anime+girl+flowers", "anime+girl+forest",
+    "anime+kawaii+girl", "anime+cute+girl", "anime+warrior+girl",
+    "anime+cyberpunk+girl", "anime+girl+ocean", "anime+girl+sky",
+    "anime+girl+night", "anime+girl+stars", "anime+girl+moon",
+    "anime+girl+galaxy", "anime+pink+hair+girl", "anime+waifu",
+    "anime+girl+4k", "anime+girl+aesthetic", "anime+cherry+blossom",
+    "anime+boy+cool", "anime+couple", "anime+art",
+    "beautiful+girl+portrait", "aesthetic+girl+photography",
+    "cute+girl+wallpaper", "pretty+girl+face+portrait",
+    "girl+flowers+photography", "girl+city+night+photography",
+]
+
+FALLBACK_IMAGE = "https://wallhaven.cc/images/layout/logo.png"
+
+
+async def fetch_random_wallhaven_image() -> str:
+    try:
+        query = random.choice(WALLHAVEN_QUERIES)
+        page  = random.randint(1, 3)
+        url   = (
+            f"https://wallhaven.cc/api/v1/search"
+            f"?categories=011&purity=100&q={query}"
+            f"&sorting=random&page={page}&apikey={WALLHAVEN_API_KEY}"
+        )
+        timeout = aiohttp.ClientTimeout(total=10)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, timeout=timeout) as resp:
+                resp.raise_for_status()
+                data   = await resp.json()
+                images = data.get("data", [])
+                if not images:
+                    # Fallback: no q filter
+                    fb = (
+                        f"https://wallhaven.cc/api/v1/search"
+                        f"?categories=011&purity=100&sorting=random"
+                        f"&apikey={WALLHAVEN_API_KEY}"
+                    )
+                    async with session.get(fb, timeout=timeout) as r2:
+                        images = (await r2.json()).get("data", [])
+                if not images:
+                    return FALLBACK_IMAGE
+                chosen = random.choice(images)
+                img_url = chosen.get("path", FALLBACK_IMAGE)
+                logger.info(f"Wallhaven | query={query} page={page} | {img_url}")
+                return img_url
+    except Exception as e:
+        logger.error(f"Wallhaven fetch failed: {e}")
+        return FALLBACK_IMAGE
+
+
+# ── /start ────────────────────────────────────────────────────────────
+
+@unzip_client.on_message(filters.private & filters.command("start"))
+async def start_bot(client, message: Message):
+    from unzipper.database.users import add_user, is_user_in_db as is_user_exist
+    try:
+        if not await is_user_exist(message.from_user.id):
+            await add_user(message.from_user.id)
+    except Exception:
+        pass
+
+    lang    = await get_language(message.chat.id)
+    texts   = STRINGS[lang]
+    bot_me  = await client.get_me()
+
+    caption = (
+        f"<b>{E_STAR} Hello {message.from_user.mention},</b>\n"
+        f"<b>{E_ROCKET} I am <a href='https://t.me/{bot_me.username}'>{bot_me.first_name}</a></b>\n"
+        f"<i>Your Ultimate Archive Extractor Bot.</i>\n"
+        f"<blockquote>"
+        f"<b>{E_GREEN} System Status: Online</b>\n"
+        f"<b>{E_BOLT} Supports: ZIP, RAR, 7Z, TAR & more</b>\n"
+        f"<b>{E_LOCK} Secure Processing</b>\n"
+        f"<b>{E_STATS} Uptime: 99.9% Guaranteed</b>"
+        f"</blockquote>\n"
+        f"<b>{E_ARROW} Select an option below to get started:</b>"
+    )
+
+    photo_url = await fetch_random_wallhaven_image()
+
+    try:
+        await client.send_photo(
+            chat_id=message.chat.id,
+            photo=photo_url,
+            caption=caption,
+            reply_markup=Buttons.START,
+            reply_to_message_id=message.id,
+            parse_mode="html"
+        )
+    except Exception:
+        await message.reply_text(
+            caption,
+            reply_markup=Buttons.START,
+            parse_mode="html",
+            disable_web_page_preview=True
+        )
+
+
+# ── Thumbnail commands ────────────────────────────────────────────────
+
+@unzip_client.on_message(filters.private & filters.command(["save", "set_thumb"]))
+@unzip_client.handle_erros
+async def save_dis_thumb(_, message: Message, texts):
+    prs_msg = await message.reply(texts["processing"], reply_to_message_id=message.id)
+    rply    = message.reply_to_message
+    if not rply or not rply.photo:
+        return await prs_msg.edit(texts["no_replied_msg"])
+    await save_thumbnail(message.from_user.id, rply)
+    await prs_msg.edit(texts["ok_saving_thumb"])
+
+
+@unzip_client.on_message(filters.private & filters.command(["thget", "get_thumb"]))
+@unzip_client.handle_erros
+async def give_my_thumb(_, message: Message, texts):
+    prs_msg = await message.reply(texts["processing"], reply_to_message_id=message.id)
+    gthumb  = await get_thumbnail(message.from_user.id, True)
+    if not gthumb:
+        return await prs_msg.edit(texts["no_thumb"])
+    await prs_msg.delete()
+    await message.reply_photo(gthumb)
+    # FIX: check file exists before removing
+    if path.exists(gthumb):
+        remove(gthumb)
+
+
+@unzip_client.on_message(filters.private & filters.command(["thdel", "del_thumb"]))
+@unzip_client.handle_erros
+async def delete_my_thumb(_, message: Message, texts):
+    prs_msg = await message.reply(texts["processing"], reply_to_message_id=message.id)
+    texist  = await get_thumbnail(message.from_user.id)
+    if not texist:
+        return await prs_msg.edit(texts["no_thumb"])
+    await del_thumbnail(message.from_user.id)
+    # FIX: check file exists before removing
+    if path.exists(texist):
+        remove(texist)
+    await prs_msg.edit(texts["ok_deleting_thumb"])
+
+
+@unzip_client.on_message(filters.private & filters.command("backup"))
+@unzip_client.handle_erros
+async def do_backup_files(_, message: Message, texts):
+    prs_msg = await message.reply(texts["processing"], reply_to_message_id=message.id)
+    await prs_msg.edit(texts["select_provider"], reply_markup=Buttons.BACKUP)
+
+
+@unzip_client.on_message(filters.private & filters.command("clean"))
+@unzip_client.handle_erros
+async def clean_ma_files(_, message: Message, texts):
+    prs_msg = await message.reply(texts["processing"], reply_to_message_id=message.id)
+    await prs_msg.edit(texts["ask_clean"], reply_markup=Buttons.CLEAN)
