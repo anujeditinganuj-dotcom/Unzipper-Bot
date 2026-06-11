@@ -7,6 +7,7 @@ import logging
 import aiohttp
 from os import path, remove
 from pyrogram import filters
+from pyrogram.enums import ParseMode
 from pyrogram.types import Message
 from unzipper import unzip_client, Buttons
 from unzipper.database.thumbnail import save_thumbnail, get_thumbnail, del_thumbnail
@@ -132,14 +133,14 @@ async def start_bot(client, message: Message):
             caption=caption,
             reply_markup=Buttons.START,
             reply_to_message_id=message.id,
-            parse_mode="html"
+            parse_mode=ParseMode.HTML
         )
     except Exception:
         # Photo fail ho toh text fallback
         await message.reply_text(
             caption,
             reply_markup=Buttons.START,
-            parse_mode="html",
+            parse_mode=ParseMode.HTML,
             disable_web_page_preview=True
         )
 
