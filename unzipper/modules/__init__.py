@@ -1,18 +1,5 @@
-# ===================================================================== #
-#                      Copyright (c) 2022 Itz-fork                      #
-#                                                                       #
-# This program is distributed in the hope that it will be useful,       #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of        #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                  #
-# See the GNU General Public License for more details.                  #
-#                                                                       #
-# You should have received a copy of the GNU General Public License     #
-# along with this program. If not, see <http://www.gnu.org/licenses/>   #
-# ===================================================================== #
-
-from . import admin
-from . import callbacks
-from . import extract
-from . import settings
-from . import user_utils
-__all__ = ["admin", "callbacks", "extract", "settings", "user_utils"]
+# DO NOT import modules here.
+# Pyrogram's plugins=dict(root="unzipper/modules") scans this folder
+# and loads each file automatically. Importing them here again causes
+# every handler to register TWICE.
+__all__ = []
