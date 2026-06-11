@@ -1,0 +1,65 @@
+{
+    "this_lang": "es",
+
+    "start": "Hola **{}**, Soy **Ak Unzipper Bot** 😇!\n\n`Un Bot de fuente abierta que puede extraer archivos como: zip, rar, tar etc.`\n\n**Hecho con ❤️ por @anujedits76**",
+    "about": "**Acerca de Ak Unzipper Bot,**\n\n✘ **Versión:** `{}`\n✘ **Lenguaje:** [Python](https://www.python.org/)\n✘ **Framework:** [Pyrogram](https://docs.pyrogram.org/)\n✘ **Desarrollador:** [Anuj Kumar] (https://t.me/anujedits76)\n✘ **Hecho con ❤️ por @anujedits76**",
+    
+    "processing": "`Procesando ⚙️...`",
+    "refreshing": "`Refrescando ⏳...`",
+    "gofile_token": "**Tu token de gofile:** `{}`",
+    "canceled": "**{} ✅!**\n\n`¡Todos tus archivos han sido eliminados del servidor 😏!`",
+    "log": "**Extraer registro 📝!**\n\n**ID de usuario:** `{}`\n**Reenviado de:** `{}` (`{}`)\n**Nombre del archivo:** `{}`\n**Tamaño del archivo:** `{}`",
+    
+    "help_head": "Obtiene ayuda presionando estos botones 😇",
+    "help_extract": "**¿Cómo extraer? 🤔**\n\n**1.** `Envía el archivo o enlace que quieras extraer.`\n**2.** `Presiona en el botón de extraer (Si enviaste un enlace, botón \"Url Extract\". Si es solo un archivo, botón de: \"File Extract\").`\n\n\n**Nota:**\n    **1.** `Si tu archivo está protegido por una contraseña, selecciona el modo:` **(Password) Extract 📂** `. ¡El Bot no es un DIOS para saber las contraseñas de tus archivos, si pasa, solo envía la contraseña!`\n    \n    **2.** `Por favor, no envíes archivos corruptos! Si envías uno por error, envía el comando` **/clean** `!`\n    \n    **3.** `Si tu archivo tiene más de 90 archivos, el Bot no mostrará todos los archivos extraídos para seleccionarlos. En ese caso, si no puedes ver todos los archivos, presiona el botón` \"Upload all ♻️\" `. Enviará todos los archivos extraídos para ti!`",
+    "help_upmode": "**¿Cómo cambiar el modo de envío? 🤔**\n\n**1.** `Envía el comando` **/mode** `.`\n**2.** `Selecciona la opción apropiada.`",
+    "help_backup": "**¿Cómo hacer una copia de seguridad a tus archivos? 🤔**\n\nEl servidor del Bot resetea cada 24 horas (heroku). Lo que significa que tus archivos serán completamente eliminados del servidor.\nAntes de que eso pase, puedes haber una copia de seguridad en gofile.io\n\n**1.** `Envía el comando` **/backup** `al bot.`\n**2.** `Selecciona la opción apropiada.`",
+    "help_thumb": "**¿Cómo cambiar la miniatura? 🤔**\n\nPor defecto, los videos usan una miniatura generada por `ffmpeg` y los archivos no tienen una.\nSi tu quieres establecer tu propia miniatura, puedes hacerlo con los siguientes comandos 👇,\n\n\n    • **/set_thumb** - Establecer miniatura\n\n    • **/get_thumb** - Obtener miniatura actual\n\n    • **/del_thumb** - Para borrar la miniatura existente",
+    "help_lang": "**¿Cómo cambiar de idioma? 🤔**\n\nEl idioma por defecto es el Inglés. Sin embargo, puedes cambiarlo a tu idioma, si está disponible. Para cambiar el idioma actual, envía el comando **/set_lang**.\n\n¿Quieres ayudar con las traducciones? Por favor [lee estos]",
+    
+    "ok_backup": "**¡Copia de seguridad exitosa ✅!** \n\n**Enlace 🔗:** {}",
+    "ok_download": "**¡Descarga exitosa ✅!**\n\n**📂 Nombre del archivo:** `{}`\n**⬇️ Descargado en:** `{}`",
+    "ok_extract": "**¡Extraído exitosamente ✅!**\n\n**🕐 Extraído en:** `{}`\n\n\n**Hecho con ❤️ por @anujedits76**",
+    "ok_upload": "**¡Subido exitosamente✅!**\n\n**📂 Nombre del archivo:** `{}`\n**⬆️ Subido en:** `{}`",
+    "ok_upload_basic": "**¡Subido exitosamente ✅!** \n\n *Únete a @anujedits76 ❤️**",
+    "ok_saving_thumb": "**¡Miniatura guardada exitosamente ✅!**",
+    "ok_deleting_thumb": "**Miniatura borrada exitosamente ✅!**",
+    "ok_ban": "**Usuario baneado exitosamente ✅!** \n\n**ID del usuario:** `{}`",
+    "ok_unban": "**Usuario desbaneado exitosamente ✅!** \n\n**ID del usuario:** `{}`",
+    "ok_wont_delete": "**Oh genial, No borraré tus archivos 😂!**",
+    
+    "failed_main": "**Ocurrió un error 😕!**\n\n**ERROR:** {}\n\n\n**Por favor repórtalo a @anujedits76**",
+    "failed_extract": "**Extracción fallida 😕!**\n\n**Que hacer?**\n\n - `Por favor, asegúrate de que el archivo no esté corrupto`\n - `Por favor, asegúrate de que seleccionaste el modo correcto`\n - `Pueda que tu archivo no sea soportado😔`\n\n**Por favor repórtalo a @anujedits76**",
+    
+    "no_thumb": "¡Miniatura no encontrada. Establece una con el comando `/set_thumb`!",
+    "no_userid": "`¡Pon una ID de usuario!`",
+    "no_archive": "`¡Este no es un archivo 😑`",
+    "no_replied_msg": "`¡Responde el mensaje!`",
+    "no_splitted_arc": "`¡Dawg, este no es parte de tu archivo separado 😑!`",
+    
+    "ask_clean": "**¿Quieres borrar todos los archivos de mi servidor🤔?**\n\n**Nota:** `Esta acción no se puede deshacer!`",
+    "ask_password": "**Envía la contraseña, por favor 🔑:**",
+    "ask_gofile_token": "**Por favor envía tu token de gofile.io**",
+    "ask_what_you_want": "**¿Qué quieres hacer?**",
+    
+    "select_upmode": "`¡Por favor selecciona el modo de subida, presionado los siguientes botones!`\n\n**El modo actual de subida es:** `{}`",
+    "select_lang": "`Selecciona tu idioma`\n\n**El idioma actual es:** `{}`",
+    "select_files": "`¡Selecciona los archivos a subir!`",
+    "select_provider": "**Selecciona el proveedor ☁️**",
+    
+    "changed_upmode": "**El modo ha sido cambiado a** `{}` **✅!** exitosamente",
+    "changed_lang": "**El idioma ha sido cambiado a** `{}` **✅!** exitosamente",
+
+    "broadcast_started": "`¡Broadcast ha comenzado, podría tomar un tiempo 🥱!`",
+    "boradcast_results": "**¡Broadcast Completado ✅!**\n\n**Total de usuarios:** `{}`\n**Respuestas exitosas:** `{}`\n**Respuestas fallidas:** `{}`",
+    
+    "alert_splitted_arc": "**¡Archivos separados detectados!**\n\n\n**1.** `Envía las otras partes de uno a uno.`\n**2.** `Cuando hayas terminado, envía el comando` **/done** `.`\n\n\n¿Quieres cancelar el proceso actual? Envía el comando **/clean**!",
+    "alert_process_running_already": "`¡Ya hay un proceso, No spamees idiota 😑!` \n\n¿Quieres cancelar el proceso actual? Solo envía comando **/clean** !",
+    "alert_downloading_part": "`¡Oh, otra parte del archivo separado fue enviado por TI 👀!`",
+    "alert_part_exists": "`¡Dawg, Ya tengo este archivo 😑!`",
+    "alert_sending_file": "Enviando los archivos seleccionados. ¡Por favor espera!",
+    "alert_sending_files": "Enviando todos los archivos. ¡Por favor espera !",
+    "alert_file_too_large": "`El tamaño del archivo es demasiado grande para enviarlo a Telegram 🥶! Intentando subir el archivo a gofile.io ahora 😉!`",
+    "alert_empty_files": "`Lo siento, Tu archivo ha sido removido del servidor 😔!`",
+    "alert_uploading_to_gofile": "`¡Subiendo archivos extraídos a  gofile.io, por favor espera!`"
+}
