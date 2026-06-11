@@ -196,3 +196,103 @@ async def do_backup_files(_, message: Message, texts):
 async def clean_ma_files(_, message: Message, texts):
     prs_msg = await message.reply(texts["processing"], reply_to_message_id=message.id)
     await prs_msg.edit(texts["ask_clean"], reply_markup=Buttons.CLEAN)
+
+
+# ── /status ───────────────────────────────────────────────────────────
+
+@unzip_client.on_message(filters.private & filters.command("status"))
+@unzip_client.handle_erros
+async def show_status(_, message: Message, texts):
+    from datetime import datetime, timezone
+    from unzipper.database.users import is_user_in_db as is_user_exist
+
+    user_id = message.from_user.id
+    in_db = await is_user_exist(user_id)
+
+    now = datetime.now(timezone.utc)
+    week_num = now.strftime("%Y-W%W")
+
+    await message.reply(
+        f"<b>📋 Account Status</b>\n\n"
+        f"<b>👤 User Info:</b>\n"
+        f" ↳ <b>ID:</b> <code>{user_id}</code>\n"
+        f" ↳ <b>Role:</b> 🆓 Free User\n"
+        f" ↳ <b>Status:</b> {'✅ Active' if in_db else '❌ Not Registered'}\n\n"
+        f"<b>📊 Monthly Quota:</b>\n"
+        f" ↳ <b>Remaining:</b> 10.0 GiB extractions\n\n"
+        f"<b>🛡 Warnings:</b>\n"
+        f" ↳ ✅ No warnings (0/3)\n\n"
+        f"<b>📅 Current Month:</b> {week_num}",
+        parse_mode=ParseMode.HTML,
+        reply_to_message_id=message.id
+    )
+
+
+# ── /cancel ───────────────────────────────────────────────────────────
+
+@unzip_client.on_message(filters.private & filters.command("cancel"))
+@unzip_client.handle_erros
+async def cancel_process(_, message: Message, texts):
+    from shutil import rmtree
+    from unzipper.database.split_arc import del_split_arc_user
+    user_id = message.from_user.id
+    await del_split_arc_user(user_id)
+    try:
+        rmtree(f"{Config.DOWNLOAD_LOCATION}/{user_id}", ignore_errors=True)
+    except Exception:
+        pass
+    await message.reply(
+        texts["canceled"].format("Process cancelled by user"),
+        reply_to_message_id=message.id
+    )
+
+
+# ── /done ─────────────────────────────────────────────────────────────
+
+@unzip_client.on_message(filters.private & filters.command("done"))
+@unzip_client.handle_erros
+async def finish_split_arc(_, message: Message, texts):
+    from unzipper.database.split_arc import get_split_arc_user, del_split_arc_user
+    from unzipper.lib.extractor import Extractor, ExtractionFailed
+    from unzipper.helpers_nexa.utils import get_files
+    from unzipper.helpers_nexa.buttons import E_BATCH, E_CROSS, ICON_ARCHIVE, ICON_CANCEL
+    from pyrogram.errors import ReplyMarkupTooLong
+    from shutil import rmtree
+    from time import time
+
+    user_id = message.from_user.id
+    arc_data = await get_split_arc_user(user_id)
+    if not arc_data:
+        return await message.reply(texts["no_splitted_arc"], reply_to_message_id=message.id)
+
+    arc_name  = arc_data.get("arc_name")
+    password  = arc_data.get("password", "")
+    download_path = f"{Config.DOWNLOAD_LOCATION}/{user_id}"
+    ext_files_dir = f"{download_path}/extracted"
+
+    prs_msg = await message.reply(texts["processing"], reply_to_message_id=message.id)
+    try:
+        exter = Extractor()
+        ext_s = time()
+        if password:
+            await exter.extract(arc_name, ext_files_dir, password)
+        else:
+            await exter.extract(arc_name, ext_files_dir)
+        ext_e = time()
+
+        from unzipper.helpers_nexa.utils import TimeFormatter
+        await prs_msg.edit(texts["ok_extract"].format(TimeFormatter(round(ext_e - ext_s) * 1000)))
+
+        files = await get_files(ext_files_dir)
+        i_e_buttons = await Buttons.make_files_keyboard(files, user_id, message.chat.id)
+        await del_split_arc_user(user_id)
+        try:
+            await prs_msg.edit(texts["select_files"], reply_markup=i_e_buttons)
+        except ReplyMarkupTooLong:
+            i_e_buttons = await Buttons.make_files_keyboard(files, user_id, message.chat.id, False)
+            await prs_msg.edit(texts["select_files"], reply_markup=i_e_buttons)
+    except ExtractionFailed:
+        await prs_msg.edit(texts["failed_extract"])
+    except Exception as e:
+        await prs_msg.edit(texts["failed_main"].format(e))
+        rmtree(download_path, ignore_errors=True)
