@@ -57,7 +57,7 @@ async def unzipper_cb(client, query: CallbackQuery, texts):
             await client.edit_message_media(
                 chat_id=query.message.chat.id,
                 message_id=query.message.id,
-                media=InputMediaPhoto(media=photo_url, caption=caption),
+                media=InputMediaPhoto(media=photo_url, caption=caption, parse_mode="html"),
                 reply_markup=Buttons.START
             )
         except Exception:
