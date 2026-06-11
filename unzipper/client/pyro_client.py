@@ -141,7 +141,7 @@ class UnzipperBot(Client):
                 await tgupmsg.edit(
                     STRINGS[lang]["ok_upload"].format(
                         path.basename(doc_f),
-                        TimeFormatter(round(etm - stm))
+                        TimeFormatter(round(etm - stm) * 1000)
                     )
                 )
             except Exception:
