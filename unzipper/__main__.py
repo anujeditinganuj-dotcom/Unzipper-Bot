@@ -4,9 +4,16 @@
 
 import logging
 import asyncio
-from os import makedirs, path
+import sys
+from os import makedirs, path, chdir
 from config import Config
 from .server import keep_alive
+
+# Fix working directory — ensures "unzipper/modules" path is always valid
+# no matter where the process is launched from
+_THIS_DIR = path.dirname(path.dirname(path.abspath(__file__)))
+chdir(_THIS_DIR)
+sys.path.insert(0, _THIS_DIR)
 
 # NOTE: Do NOT manually import unzipper.modules here.
 # Pyrogram's plugins=dict(root="unzipper/modules") in UnzipperBot.__init__
