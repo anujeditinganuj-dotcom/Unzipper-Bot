@@ -45,36 +45,6 @@ E_CLOCK   = '<emoji id=5386367538735104399>⌛</emoji>'
 E_ARROW   = '<emoji id=5416117059207572332>➡️</emoji>'
 
 # =========================================================
-# Plain-emoji versions for BUTTON LABELS
-# (InlineKeyboardButton text is plain text and does NOT
-#  support <emoji id=...> HTML tags — only message captions
-#  sent with parse_mode=HTML do. Using the raw E_* constants
-#  in a button shows the literal "<emoji id=...>" text, so
-#  we strip the wrapper here and keep just the visible emoji.)
-# =========================================================
-import re as _re
-
-
-def _plain(tag: str) -> str:
-    m = _re.match(r'<emoji id=\d+>(.*?)</emoji>', tag)
-    return m.group(1) if m else tag
-
-
-B_INFO    = _plain(E_INFO)
-B_BOLT    = _plain(E_BOLT)
-B_BATCH   = _plain(E_BATCH)
-B_IMAGE   = _plain(E_IMAGE)
-B_STATS   = _plain(E_STATS)
-B_CHANNEL = _plain(E_CHANNEL)
-B_ARROW   = _plain(E_ARROW)
-B_LOCK    = _plain(E_LOCK)
-B_CROSS   = _plain(E_CROSS)
-B_LINK    = _plain(E_LINK)
-B_STOP    = _plain(E_STOP)
-B_SPARK   = _plain(E_SPARK)
-B_PENCIL  = _plain(E_PENCIL)
-
-# =========================================================
 # Button Icon IDs  (from Src-bot)
 # =========================================================
 ICON_INFO      = 5334544901428229844
@@ -158,8 +128,8 @@ class Unzipper_Buttons:
     async def make_files_keyboard(self, files: list, user_id: int, chat_id: int, inlude_files: bool = True):
         # Top row: Upload All + Cancel side by side
         rows = [[
-            make_btn(f"{B_BATCH} {STRINGS['buttons']['upload_all']}", callback_data=f"ext_a|{user_id}|{chat_id}", icon_custom_emoji_id=ICON_ARCHIVE, style=_P()),
-            make_btn(f"{B_CROSS} {STRINGS['buttons']['cancel']}",     callback_data="cancel_dis",                  icon_custom_emoji_id=ICON_CANCEL,  style=_D()),
+            make_btn(f"{E_BATCH} {STRINGS['buttons']['upload_all']}", callback_data=f"ext_a|{user_id}|{chat_id}", icon_custom_emoji_id=ICON_ARCHIVE, style=_P()),
+            make_btn(f"{E_CROSS} {STRINGS['buttons']['cancel']}",     callback_data="cancel_dis",                  icon_custom_emoji_id=ICON_CANCEL,  style=_D()),
         ]]
         if inlude_files:
             file_btns = []
@@ -183,8 +153,12 @@ class Unzipper_Buttons:
     def START(self):
         return InlineKeyboardMarkup([
             [
-                make_btn(f" {B_INFO} ʜᴇʟᴘ ",  callback_data="helpcallback",  icon_custom_emoji_id=ICON_HELP,    style=_P()),
-                make_btn(f" {B_BOLT} ᴀʙᴏᴜᴛ ", callback_data="aboutcallback", icon_custom_emoji_id=ICON_INFO,    style=_P()),
+                make_btn(f" {E_INFO} ʜᴇʟᴘ ",     callback_data="helpcallback",     icon_custom_emoji_id=ICON_HELP,  style=_P()),
+                make_btn(f" {E_BOLT} ᴀʙᴏᴜᴛ ",    callback_data="aboutcallback",    icon_custom_emoji_id=ICON_INFO,  style=_P()),
+            ],
+            [
+                make_btn(f" {E_GEAR} sᴇᴛᴛɪɴɢs ", callback_data="settingscallback", icon_custom_emoji_id=ICON_GEAR,  style=_P()),
+                make_btn(f" {E_SHIELD} ʀᴜʟᴇs ",  callback_data="rulescallback",    icon_custom_emoji_id=ICON_LIST,  style=_P()),
             ],
         ])
 
@@ -192,48 +166,48 @@ class Unzipper_Buttons:
     def HELP(self):
         return InlineKeyboardMarkup([
             [
-                make_btn(f" {B_BATCH} ᴇxᴛʀᴀᴄᴛ ",   callback_data="extracthelp", icon_custom_emoji_id=ICON_ARCHIVE, style=_P()),
-                make_btn(f" {B_BOLT} ᴜᴘʟᴏᴀᴅ ",      callback_data="upmodhelp",   icon_custom_emoji_id=ICON_UPLOAD,  style=_P()),
+                make_btn(f" {E_BATCH} ᴇxᴛʀᴀᴄᴛ ",   callback_data="extracthelp", icon_custom_emoji_id=ICON_ARCHIVE, style=_P()),
+                make_btn(f" {E_BOLT} ᴜᴘʟᴏᴀᴅ ",      callback_data="upmodhelp",   icon_custom_emoji_id=ICON_UPLOAD,  style=_P()),
             ],
             [
-                make_btn(f" {B_IMAGE} ᴛʜᴜᴍʙɴᴀɪʟ ", callback_data="thumbhelp",   icon_custom_emoji_id=ICON_THUMB,   style=_P()),
-                make_btn(f" {B_STATS} ʙᴀᴄᴋᴜᴘ ",    callback_data="backuphelp",  icon_custom_emoji_id=ICON_BACKUP,  style=_P()),
+                make_btn(f" {E_IMAGE} ᴛʜᴜᴍʙɴᴀɪʟ ", callback_data="thumbhelp",   icon_custom_emoji_id=ICON_THUMB,   style=_P()),
+                make_btn(f" {E_STATS} ʙᴀᴄᴋᴜᴘ ",    callback_data="backuphelp",  icon_custom_emoji_id=ICON_BACKUP,  style=_P()),
             ],
             [
-                make_btn(f" {B_CHANNEL} ʟᴀɴɢᴜᴀɢᴇs ", callback_data="langhelp", icon_custom_emoji_id=ICON_LANG,  style=_P()),
+                make_btn(f" {E_CHANNEL} ʟᴀɴɢᴜᴀɢᴇs ", callback_data="langhelp", icon_custom_emoji_id=ICON_LANG,  style=_P()),
             ],
             [
-                make_btn(f" {B_ARROW} ʙᴀᴄᴋ ", callback_data="megoinhome", icon_custom_emoji_id=ICON_HOME, style=_D()),
+                make_btn(f" {E_ARROW} ʙᴀᴄᴋ ", callback_data="megoinhome", icon_custom_emoji_id=ICON_HOME, style=_D()),
             ],
         ])
 
     @property
     def HELP_BACK(self):
         return InlineKeyboardMarkup([[
-            make_btn(f" {B_ARROW} ʙᴀᴄᴋ ᴛᴏ ʜᴇʟᴘ ", callback_data="helpcallback", icon_custom_emoji_id=ICON_HOME, style=_P()),
+            make_btn(f" {E_ARROW} ʙᴀᴄᴋ ᴛᴏ ʜᴇʟᴘ ", callback_data="helpcallback", icon_custom_emoji_id=ICON_HOME, style=_P()),
         ]])
 
     @property
     def EXTRACT_FILE(self):
         return InlineKeyboardMarkup([
-            [make_btn(f" {B_BATCH} ꜰɪʟᴇ ᴇxᴛʀᴀᴄᴛ ",          callback_data="extract_file|tg_file|no_pass",   icon_custom_emoji_id=ICON_ARCHIVE,  style=_P())],
-            [make_btn(f" {B_LOCK} ꜰɪʟᴇ (ᴘᴀssᴡᴏʀᴅ) ᴇxᴛʀᴀᴄᴛ ", callback_data="extract_file|tg_file|with_pass", icon_custom_emoji_id=ICON_PASS,     style=_P())],
-            [make_btn(f" {B_CROSS} ᴄᴀɴᴄᴇʟ ",                  callback_data="cancel_dis",                     icon_custom_emoji_id=ICON_CANCEL,   style=_D())],
+            [make_btn(f" {E_BATCH} ꜰɪʟᴇ ᴇxᴛʀᴀᴄᴛ ",          callback_data="extract_file|tg_file|no_pass",   icon_custom_emoji_id=ICON_ARCHIVE,  style=_P())],
+            [make_btn(f" {E_LOCK} ꜰɪʟᴇ (ᴘᴀssᴡᴏʀᴅ) ᴇxᴛʀᴀᴄᴛ ", callback_data="extract_file|tg_file|with_pass", icon_custom_emoji_id=ICON_PASS,     style=_P())],
+            [make_btn(f" {E_CROSS} ᴄᴀɴᴄᴇʟ ",                  callback_data="cancel_dis",                     icon_custom_emoji_id=ICON_CANCEL,   style=_D())],
         ])
 
     @property
     def EXTRACT_URL(self):
         return InlineKeyboardMarkup([
-            [make_btn(f" {B_LINK} ᴜʀʟ ᴇxᴛʀᴀᴄᴛ ",              callback_data="extract_file|url|no_pass",   icon_custom_emoji_id=ICON_DOWNLOAD, style=_P())],
-            [make_btn(f" {B_LOCK} (ᴘᴀssᴡᴏʀᴅ) ᴜʀʟ ᴇxᴛʀᴀᴄᴛ ", callback_data="extract_file|url|with_pass", icon_custom_emoji_id=ICON_PASS,     style=_P())],
-            [make_btn(f" {B_CROSS} ᴄᴀɴᴄᴇʟ ",                   callback_data="cancel_dis",                 icon_custom_emoji_id=ICON_CANCEL,   style=_D())],
+            [make_btn(f" {E_LINK} ᴜʀʟ ᴇxᴛʀᴀᴄᴛ ",              callback_data="extract_file|url|no_pass",   icon_custom_emoji_id=ICON_DOWNLOAD, style=_P())],
+            [make_btn(f" {E_LOCK} (ᴘᴀssᴡᴏʀᴅ) ᴜʀʟ ᴇxᴛʀᴀᴄᴛ ", callback_data="extract_file|url|with_pass", icon_custom_emoji_id=ICON_PASS,     style=_P())],
+            [make_btn(f" {E_CROSS} ᴄᴀɴᴄᴇʟ ",                   callback_data="cancel_dis",                 icon_custom_emoji_id=ICON_CANCEL,   style=_D())],
         ])
 
     @property
     def CLEAN(self):
         return InlineKeyboardMarkup([
-            [make_btn(f" {B_STOP} ᴄʟᴇᴀɴ ᴍʏ ꜰɪʟᴇs ", callback_data="cancel_dis", icon_custom_emoji_id=ICON_TRASH,  style=_D())],
-            [make_btn(f" {B_SPARK} ɴᴏᴏᴏ 😳! ",        callback_data="nobully",    icon_custom_emoji_id=ICON_CHECK,  style=_S())],
+            [make_btn(f" {E_STOP} ᴄʟᴇᴀɴ ᴍʏ ꜰɪʟᴇs ", callback_data="cancel_dis", icon_custom_emoji_id=ICON_TRASH,  style=_D())],
+            [make_btn(f" {E_SPARK} ɴᴏᴏᴏ 😳! ",        callback_data="nobully",    icon_custom_emoji_id=ICON_CHECK,  style=_S())],
         ])
 
     @property
@@ -246,17 +220,17 @@ class Unzipper_Buttons:
     def SETTINGS_GOFILE(self):
         return InlineKeyboardMarkup([
             [
-                make_btn(f" {B_PENCIL} sᴇᴛ ᴛᴏᴋᴇɴ ",    callback_data="gf_setting-set", icon_custom_emoji_id=ICON_PENCIL, style=_P()),
-                make_btn(f" {B_CROSS} ᴅᴇʟ ᴛᴏᴋᴇɴ ",     callback_data="gf_setting-del", icon_custom_emoji_id=ICON_CANCEL, style=_D()),
+                make_btn(f" {E_PENCIL} sᴇᴛ ᴛᴏᴋᴇɴ ",    callback_data="gf_setting-set", icon_custom_emoji_id=ICON_PENCIL, style=_P()),
+                make_btn(f" {E_CROSS} ᴅᴇʟ ᴛᴏᴋᴇɴ ",     callback_data="gf_setting-del", icon_custom_emoji_id=ICON_CANCEL, style=_D()),
             ],
-            [make_btn(f" {B_INFO} ɢᴇᴛ ᴛᴏᴋᴇɴ ", callback_data="gf_setting-get", icon_custom_emoji_id=ICON_INFO, style=_P())],
+            [make_btn(f" {E_INFO} ɢᴇᴛ ᴛᴏᴋᴇɴ ", callback_data="gf_setting-get", icon_custom_emoji_id=ICON_INFO, style=_P())],
         ])
 
     @property
     def UPLOAD_MODE(self):
         return InlineKeyboardMarkup([
-            [make_btn(f" {B_STATS} ᴀs ᴅᴏᴄ 📁 ",   callback_data="set_mode|doc",   icon_custom_emoji_id=ICON_ARCHIVE, style=_P())],
-            [make_btn(f" {B_BOLT} ᴀs ᴠɪᴅᴇᴏ 📹 ",  callback_data="set_mode|video", icon_custom_emoji_id=ICON_UPLOAD,  style=_P())],
+            [make_btn(f" {E_STATS} ᴀs ᴅᴏᴄ 📁 ",   callback_data="set_mode|doc",   icon_custom_emoji_id=ICON_ARCHIVE, style=_P())],
+            [make_btn(f" {E_BOLT} ᴀs ᴠɪᴅᴇᴏ 📹 ",  callback_data="set_mode|video", icon_custom_emoji_id=ICON_UPLOAD,  style=_P())],
         ])
 
     @property
@@ -267,7 +241,22 @@ class Unzipper_Buttons:
         ])
 
     @property
+    def SETTINGS(self):
+        return InlineKeyboardMarkup([
+            [
+                make_btn(f" {E_BOLT} ᴜᴘʟᴏᴀᴅ ᴍᴏᴅᴇ ", callback_data="uploadmodecallback", icon_custom_emoji_id=ICON_UPLOAD, style=_P()),
+            ],
+            [
+                make_btn(f" {E_IMAGE} ᴛʜᴜᴍʙɴᴀɪʟ ",  callback_data="thumbcallback",       icon_custom_emoji_id=ICON_THUMB,  style=_P()),
+                make_btn(f" {E_CHANNEL} ʟᴀɴɢᴜᴀɢᴇ ", callback_data="langcallback",        icon_custom_emoji_id=ICON_LANG,   style=_P()),
+            ],
+            [
+                make_btn(f" {E_ARROW} ʙᴀᴄᴋ ", callback_data="megoinhome", icon_custom_emoji_id=ICON_HOME, style=_D()),
+            ],
+        ])
+
+    @property
     def BACK(self):
         return InlineKeyboardMarkup([[
-            make_btn(f" {B_ARROW} ʙᴀᴄᴋ ", callback_data="megoinhome", icon_custom_emoji_id=ICON_HOME, style=_D()),
+            make_btn(f" {E_ARROW} ʙᴀᴄᴋ ", callback_data="megoinhome", icon_custom_emoji_id=ICON_HOME, style=_D()),
         ]])
