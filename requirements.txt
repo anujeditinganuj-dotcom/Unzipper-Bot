@@ -1,6 +1,5 @@
 kurigram
 tgcrypto
-git+https://github.com/KurimuzonAkuma/pyromod
 motor
 dnspython
 psutil
