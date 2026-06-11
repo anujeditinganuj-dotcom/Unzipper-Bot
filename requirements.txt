@@ -10,4 +10,5 @@ pykeyboard
 aiofiles
 flask
 Pillow
+git+https://github.com/KurimuzonAkuma/pyromod  
 git+https://github.com/Itz-fork/Gofile2.git
