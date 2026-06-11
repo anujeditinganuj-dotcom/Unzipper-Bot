@@ -328,6 +328,47 @@ async def unzipper_cb(client, query: CallbackQuery, texts):
                 reply_markup=await Buttons.make_button("Gofile link 🔗", url=glnk)
             )
 
+    # ── Rules ─────────────────────────────────────────────────────────
+    elif qdat == "rulescallback":
+        await query.edit_message_caption(
+            caption=texts["rules"],
+            reply_markup=Buttons.BACK,
+            parse_mode=ParseMode.HTML
+        )
+
+    # ── Settings menu ─────────────────────────────────────────────────
+    elif qdat == "settingscallback":
+        await query.edit_message_caption(
+            caption=texts["settings_text"],
+            reply_markup=Buttons.SETTINGS,
+            parse_mode=ParseMode.HTML
+        )
+
+    elif qdat == "uploadmodecallback":
+        from unzipper.database.upload_mode import get_upload_mode
+        upload_mode = await get_upload_mode(query.from_user.id)
+        await query.edit_message_caption(
+            caption=texts["select_upmode"].format(upload_mode),
+            reply_markup=Buttons.UPLOAD_MODE,
+            parse_mode=ParseMode.HTML
+        )
+
+    elif qdat == "thumbcallback":
+        await query.edit_message_caption(
+            caption=texts["help_thumb"],
+            reply_markup=Buttons.HELP_BACK,
+            parse_mode=ParseMode.HTML
+        )
+
+    elif qdat == "langcallback":
+        from unzipper.database.language import get_language
+        clng = await get_language(query.from_user.id)
+        await query.edit_message_caption(
+            caption=texts["select_lang"].format(clng),
+            reply_markup=Buttons.LANGUAGES,
+            parse_mode=ParseMode.HTML
+        )
+
     # ── Cancel / nobully ──────────────────────────────────────────────
     elif qdat == "cancel_dis":
         await del_split_arc_user(query.from_user.id)
