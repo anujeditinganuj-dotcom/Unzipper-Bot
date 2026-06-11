@@ -34,6 +34,20 @@ async def main():
 
     await unzip_client.start()
 
+    # Register custom listener middleware (pyromod replacement)
+    logging.info(" >> Registering message listener middleware...")
+    from unzipper.client.listener import resolve_listener
+    from pyrogram import filters as _filters
+
+    @unzip_client.on_message(_filters.private & ~_filters.command(
+        ["start", "help", "mode", "setmode", "lang", "set_lang",
+         "gofile", "gfsets", "save", "set_thumb", "thget", "get_thumb",
+         "thdel", "del_thumb", "backup", "clean", "done", "stats",
+         "ban", "unban", "broadcast"]
+    ), group=-1)
+    async def _listener_middleware(client, message):
+        resolve_listener(message.chat.id, message)
+
     # Warm the language cache from DB (runs as background task)
     logging.info(" >> Loading language cache from DB...")
     from unzipper.client.caching import update_languages_cache
