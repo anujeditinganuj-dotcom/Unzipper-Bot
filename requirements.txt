@@ -1,7 +1,6 @@
 kurigram
-requests
 tgcrypto
-pyromod==1.5
+git+https://github.com/KurimuzonAkuma/pyromod
 motor
 dnspython
 psutil
@@ -9,6 +8,5 @@ aiohttp
 pykeyboard
 aiofiles
 flask
-Pillow
-git+https://github.com/KurimuzonAkuma/pyromod  
+requests
 git+https://github.com/Itz-fork/Gofile2.git
