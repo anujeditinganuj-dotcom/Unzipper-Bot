@@ -1,0 +1,13 @@
+pyrogram
+requests
+tgcrypto
+pyromod==1.5
+motor
+dnspython
+psutil
+aiohttp
+pykeyboard
+aiofiles
+flask
+Pillow
+git+https://github.com/Itz-fork/Gofile2.git
