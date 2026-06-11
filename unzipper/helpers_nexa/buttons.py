@@ -3,7 +3,6 @@
 # ===================================================================== #
 
 from os.path import basename
-from pykeyboard import InlineKeyboard
 from unzipper.client.caching import STRINGS
 from unzipper.helpers_nexa.utils import read_json_sync
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -127,23 +126,26 @@ class Unzipper_Buttons:
         ])
 
     async def make_files_keyboard(self, files: list, user_id: int, chat_id: int, inlude_files: bool = True):
-        i_kbd = InlineKeyboard(row_width=2)
-        data = [
+        # Top row: Upload All + Cancel side by side
+        rows = [[
             make_btn(f"{E_BATCH} {STRINGS['buttons']['upload_all']}", callback_data=f"ext_a|{user_id}|{chat_id}", icon_custom_emoji_id=ICON_ARCHIVE, style=_P()),
-            make_btn(f"{E_CROSS} {STRINGS['buttons']['cancel']}",     callback_data="cancel_dis",                  icon_custom_emoji_id=ICON_CANCEL, style=_D()),
-        ]
+            make_btn(f"{E_CROSS} {STRINGS['buttons']['cancel']}",     callback_data="cancel_dis",                  icon_custom_emoji_id=ICON_CANCEL,  style=_D()),
+        ]]
         if inlude_files:
+            file_btns = []
             for num, file in enumerate(files):
                 if num >= 90:
                     break
-                data.append(
+                file_btns.append(
                     InlineKeyboardButton(
                         f"{num} - {basename(file)}".encode("utf-8").decode("utf-8"),
-                        f"ext_f|{user_id}|{chat_id}|{num}"
+                        callback_data=f"ext_f|{user_id}|{chat_id}|{num}"
                     )
                 )
-        i_kbd.add(*data)
-        return i_kbd
+            # Pair file buttons into rows of 2
+            for i in range(0, len(file_btns), 2):
+                rows.append(file_btns[i:i+2])
+        return InlineKeyboardMarkup(rows)
 
     # ── Static keyboards ──────────────────────────────────────────────
 
