@@ -1,7 +1,7 @@
 FROM archlinux:latest
 
 RUN pacman -Syyu --noconfirm
-RUN pacman -S --noconfirm python-pip zstd p7zip gcc ffmpeg
+RUN pacman -S --noconfirm python-pip zstd p7zip gcc ffmpeg git
 RUN pip3 install -U pip --break-system-packages
 RUN mkdir /app/
 WORKDIR /app/
