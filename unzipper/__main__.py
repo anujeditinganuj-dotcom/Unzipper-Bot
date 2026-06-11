@@ -8,10 +8,10 @@ from os import makedirs, path
 from config import Config
 from .server import keep_alive
 
-# FIX: 'import *' is only allowed at module level, not inside a function.
-# Moved here from inside main() to prevent "SyntaxError: import * only
-# allowed at module level" at runtime.
-from unzipper.modules import admin, callbacks, extract, settings, user_utils  # noqa: F401
+# NOTE: Do NOT manually import unzipper.modules here.
+# Pyrogram's plugins=dict(root="unzipper/modules") in UnzipperBot.__init__
+# already loads all modules automatically. Importing them again causes
+# every handler to register TWICE → duplicate tasks → bot crashes.
 
 
 async def main():
