@@ -11,7 +11,6 @@
 # ===================================================================== #
 
 import logging
-from pyromod import listen
 from .client.caching import update_cache
 
 # Logging stuff
