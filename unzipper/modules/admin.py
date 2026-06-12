@@ -60,15 +60,19 @@ async def send_stats(_, message: Message, texts):
 async def _do_broadcast(message, user):
     try:
         await message.copy(chat_id=int(user))
-        return 200
+        return "success"
     except FloodWait as e:
-        # FIX: .value for new pyrogram, .x for legacy
         wait = e.value if hasattr(e, "value") else e.x
         await sleep(wait)
-        return await _do_broadcast(message, user)  # FIX: was missing await
-    except Exception:
+        return await _do_broadcast(message, user)
+    except Exception as e:
+        err = str(e).lower()
         await del_user(int(user))
-        return 0
+        if "blocked" in err or "user is blocked" in err:
+            return "blocked"
+        elif "deactivated" in err:
+            return "deleted"
+        return "failed"
 
 
 @unzip_client.on_message(
@@ -81,20 +85,48 @@ async def broadcast_dis(_, message: Message, texts):
     if not r_msg:
         return await bc_msg.edit(texts["no_replied_msg"])
 
-    await bc_msg.edit(texts["broadcast_started"])
-    success_no = 0
-    failed_no  = 0
+    import datetime, time as _time
     total_users = await count_users()
+    await bc_msg.edit(
+        f"**🚀 Broadcast Started...**\n\n"
+        f"**👥 Total Users:** `{total_users}`"
+    )
 
-    # FIX: async for on async generator — no await
+    start_time = _time.time()
+    success = blocked = deleted = failed = done = 0
+
     async for user in get_users_list():
         result = await _do_broadcast(r_msg, user)
-        if result == 200:
-            success_no += 1
-        else:
-            failed_no += 1
+        if result == "success":   success += 1
+        elif result == "blocked": blocked += 1
+        elif result == "deleted": deleted += 1
+        else:                     failed  += 1
+        done += 1
 
-    await bc_msg.edit(texts["boradcast_results"].format(total_users, success_no, failed_no))
+        if done % 20 == 0:
+            try:
+                await bc_msg.edit(
+                    f"**⚡️ Broadcast In Progress**\n\n"
+                    f"**👥 Total:** `{total_users}`\n"
+                    f"**✅ Done:** `{done} / {total_users}`\n"
+                    f"**✔️ Success:** `{success}`\n"
+                    f"**⛔️ Blocked:** `{blocked}`\n"
+                    f"**❌ Deleted:** `{deleted}`\n"
+                    f"**⚠️ Failed:** `{failed}`"
+                )
+            except Exception:
+                pass
+
+    time_taken = datetime.timedelta(seconds=int(_time.time() - start_time))
+    await bc_msg.edit(
+        f"**✔️ Broadcast Completed!**\n\n"
+        f"**⌛ Time Taken:** `{time_taken}`\n\n"
+        f"**👥 Total Users:** `{total_users}`\n"
+        f"**✅ Success:** `{success}`\n"
+        f"**⛔️ Blocked:** `{blocked}`\n"
+        f"**❌ Deleted:** `{deleted}`\n"
+        f"**⚠️ Failed:** `{failed}`"
+    )
 
 
 @unzip_client.on_message(
