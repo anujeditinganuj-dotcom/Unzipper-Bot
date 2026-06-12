@@ -3,8 +3,17 @@
 # ===================================================================== #
 
 from os import path, makedirs
+from subprocess import Popen, PIPE
 from .errors import ExtractionFailed
-from unzipper.helpers_nexa.utils import run_shell_cmds, run_cmds_on_cr
+from unzipper.helpers_nexa.utils import run_cmds_on_cr
+
+
+def _run_cmd_with_code(command: str):
+    """Run shell command and return (stdout, returncode)."""
+    proc = Popen(command, stdout=PIPE, stderr=PIPE, shell=True)
+    out, err = proc.communicate()
+    stdout = (out or b"").decode("utf-8", errors="replace").strip()
+    return stdout, proc.returncode
 
 
 class Extractor:
@@ -16,30 +25,22 @@ class Extractor:
     async def extract(self, arc_path: str, out: str,
                       password: str = "", splitted: bool = False):
         if path.splitext(arc_path)[1] == ".zst":
-            makedirs(out, exist_ok=True)   # FIX: exist_ok so no FileExistsError
-            ex = await self._ext_zstd(out, arc_path)
-            await self.__check_output(ex)
+            makedirs(out, exist_ok=True)
+            ex, code = await run_cmds_on_cr(_run_cmd_with_code,
+                f'zstd -f --output-dir-flat "{out}" -d "{arc_path}"')
+            if code != 0:
+                raise ExtractionFailed
             return ex
         else:
-            makedirs(out, exist_ok=True)   # FIX: also create for 7z target
-            ex = await self._ext_7z(out, arc_path, password, splitted)
-            await self.__check_output(ex)
+            makedirs(out, exist_ok=True)
+            if password:
+                cmd = f'7z x -o"{out}" -p"{password}" "{arc_path}" -y'
+            else:
+                cmd = f'7z x -o"{out}" "{arc_path}" -y'
+            if splitted:
+                cmd += " -tsplit"
+            ex, code = await run_cmds_on_cr(_run_cmd_with_code, cmd)
+            # 7z exit codes: 0=OK, 1=Warning(still extracted), 2+=Fatal error
+            if code not in (0, 1):
+                raise ExtractionFailed
             return ex
-
-    async def _ext_7z(self, out: str, arc_path: str,
-                      password: str = "", splitted: bool = False) -> str:
-        if password:
-            cmd = f'7z x -o"{out}" -p"{password}" "{arc_path}" -y'
-        else:
-            cmd = f'7z x -o"{out}" "{arc_path}" -y'
-        if splitted:
-            cmd += " -tsplit"
-        return await run_cmds_on_cr(run_shell_cmds, cmd)
-
-    async def _ext_zstd(self, out: str, arc_path: str) -> str:
-        cmd = f'zstd -f --output-dir-flat "{out}" -d "{arc_path}"'
-        return await run_cmds_on_cr(run_shell_cmds, cmd)
-
-    async def __check_output(self, out: str):
-        if out and any(e in out for e in ["Error", "Can't open as archive"]):
-            raise ExtractionFailed
