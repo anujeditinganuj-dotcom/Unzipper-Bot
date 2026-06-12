@@ -15,6 +15,18 @@ from pyrogram.types import Message
 from unzipper import unzip_client, Buttons
 from unzipper.database.language import get_language
 from unzipper.database.upload_mode import get_upload_mode
+from pyrogram.enums import ParseMode
+
+
+@unzip_client.on_message(filters.private & filters.command(["help", "h"]))
+@unzip_client.handle_erros
+async def help_command(_, message: Message, texts):
+    prs_msg = await message.reply(texts["processing"])
+    await prs_msg.edit(
+        texts["help_head"],
+        reply_markup=Buttons.HELP,
+        parse_mode=ParseMode.HTML
+    )
 
 
 @unzip_client.on_message(filters.private & filters.command(["gofile", "gfsets"]))
