@@ -25,5 +25,6 @@ update_cache()
 from .helpers_nexa.buttons import Unzipper_Buttons
 Buttons = Unzipper_Buttons()
 # Client
-from .client import UnzipperBot
+from .client import UnzipperBot, init_patch
 unzip_client = UnzipperBot()
+init_patch()
