@@ -13,18 +13,36 @@ Copyright (c) 2022 Itz-fork
 
 # Install system dependencies if not present
 if ! command -v 7z &> /dev/null; then
-    echo ">> Installing p7zip-full..."
-    apt-get update -qq && apt-get install -y -qq p7zip-full
+    echo ">> Installing p7zip..."
+    if command -v pkg &> /dev/null; then
+        pkg install -y p7zip
+    elif command -v apt-get &> /dev/null; then
+        apt-get update -qq && apt-get install -y -qq p7zip-full
+    else
+        echo "!! Could not find pkg or apt-get to install p7zip. Please install it manually."
+    fi
 fi
 
 if ! command -v zstd &> /dev/null; then
     echo ">> Installing zstd..."
-    apt-get install -y -qq zstd
+    if command -v pkg &> /dev/null; then
+        pkg install -y zstd
+    elif command -v apt-get &> /dev/null; then
+        apt-get update -qq && apt-get install -y -qq zstd
+    else
+        echo "!! Could not find pkg or apt-get to install zstd. Please install it manually."
+    fi
 fi
 
 if ! command -v ffmpeg &> /dev/null; then
     echo ">> Installing ffmpeg..."
-    apt-get install -y -qq ffmpeg
+    if command -v pkg &> /dev/null; then
+        pkg install -y ffmpeg
+    elif command -v apt-get &> /dev/null; then
+        apt-get install -y -qq ffmpeg
+    else
+        echo "!! Could not find pkg or apt-get to install ffmpeg. Please install it manually."
+    fi
 fi
 
 python3 -m unzipper
