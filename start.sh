@@ -4,7 +4,7 @@ VERSION="v1.0"
 echo "
     ||| Unzipper Bot - $VERSION |||
 
-Copyright (c) 2022 Itz-fork
+Copyright (c) 2026 Anuj
 
 --> Join @anujedits76
 --> Follow Anuj on Github
