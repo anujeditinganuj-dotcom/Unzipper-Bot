@@ -10,7 +10,7 @@ class Config(object):
     LOGS_CHANNEL = int(os.environ.get("LOGS_CHANNEL", "-1003955674028"))
     BOT_OWNER    = int(os.environ.get("BOT_OWNER", "8730393744"))
     MONGODB_URL  = os.environ.get("MONGODB_URL", "mongodb+srv://Anujedit:Anujedit@cluster0.7cs2nhd.mongodb.net/?appName=Cluster0")
-    GOFILE_TOKEN = os.environ.get("GOFILE_TOKEN", "XymofifZUjDRp0BbFDUTRZz1dvTmG4He")
+    GOFILE_TOKEN = os.environ.get("GOFILE_TOKEN", "dtTUYSgS85ipBgOyohzyfbZ99nhyZLcd")
 
     # Optional
     MAX_DOWNLOAD_SIZE = (
@@ -19,9 +19,8 @@ class Config(object):
         else 10737418240  # 10 GB default
     )
 
-    # Use absolute path so it works regardless of cwd
-    _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    DOWNLOAD_LOCATION = os.path.join(_BASE_DIR, "Anujedits76")
+    # Use /tmp for Render/cloud compatibility (writable on all platforms)
+    DOWNLOAD_LOCATION = os.environ.get("DOWNLOAD_LOCATION", "/tmp/Anujedits76")
 
     # Constants
     TG_MAX_SIZE = 2040108421
