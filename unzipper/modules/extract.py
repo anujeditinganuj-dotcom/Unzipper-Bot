@@ -58,7 +58,7 @@ async def extract_dis_archive(_, message: Message, texts):
                 )
             await Downloader().download(message.text, arc_name, unzip_msg)
         else:
-            rchat = message.forward_from_chat
+            rchat = (message.forward_origin.chat if hasattr(message.forward_origin, "chat") else None) if message.forward_origin else None
             await unzip_client.send_message(
                 Config.LOGS_CHANNEL,
                 texts["log"].format(
