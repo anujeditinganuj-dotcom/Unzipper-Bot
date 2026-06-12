@@ -7,7 +7,7 @@ echo "
 Copyright (c) 2022 Itz-fork
 
 --> Join @anujedits76
---> Follow Itz-fork on Github
+--> Follow Anuj on Github
 
 "
 
