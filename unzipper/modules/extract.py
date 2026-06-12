@@ -98,7 +98,8 @@ async def extracted_dis_spl_archive(_, message: Message, texts):
     spl_umsg = await message.reply(texts["processing"])
     user_id  = message.from_user.id
 
-    is_spl, lfn, ps = await get_split_arc_user(user_id)
+    arc_data = await get_split_arc_user(user_id)
+    is_spl, lfn, ps = arc_data if arc_data else (False, None, None)
     if not is_spl:
         return await spl_umsg.edit("`Bruh, why are you sending this command 🤔?`")
 
