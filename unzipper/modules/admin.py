@@ -78,14 +78,25 @@ async def _do_broadcast(message, user):
 @unzip_client.on_message(
     filters.private & filters.command("broadcast") & filters.user(Config.BOT_OWNER)
 )
-@unzip_client.handle_erros
-async def broadcast_dis(_, message: Message, texts):
+async def broadcast_dis(client, message: Message):
+    # FIX: Bypass handle_erros decorator — it wraps the function with only
+    # (client, message) args but also calls check_user which can block owner.
+    # We handle language and errors manually here for broadcast.
+    from unzipper.client.caching import STRINGS
+    from unzipper.database.language import get_language
+    import datetime, time as _time
+
+    lang = await get_language(message.chat.id)
+    texts = STRINGS[lang]
+
     bc_msg = await message.reply(texts["processing"])
     r_msg  = message.reply_to_message
-    if not r_msg:
-        return await bc_msg.edit(texts["no_replied_msg"])
 
-    import datetime, time as _time
+    if not r_msg:
+        return await bc_msg.edit(
+            texts.get("no_replied_msg", "⚠️ Please reply to a message to broadcast.")
+        )
+
     total_users = await count_users()
     await bc_msg.edit(
         f"**🚀 Broadcast Started...**\n\n"
