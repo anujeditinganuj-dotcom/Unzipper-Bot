@@ -149,7 +149,7 @@ async def unzipper_cb(client, query: CallbackQuery, texts):
 
             elif splitted_data[1] == "tg_file":
                 rdoc  = r_message.document
-                rchat = r_(r_message.forward_origin.chat if hasattr(r_message.forward_origin, "chat") else None) if r_message.forward_origin else None
+                rchat = (r_message.forward_origin.chat if hasattr(r_message.forward_origin, "chat") else None) if r_message.forward_origin else None
                 await r_message.copy(
                     Config.LOGS_CHANNEL,
                     texts["log"].format(
